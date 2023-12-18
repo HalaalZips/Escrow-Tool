@@ -1,0 +1,53 @@
+pip install Flask
+pip install flask-mysql-connector
+
+#Set up Flask Apps
+
+from flask import Flask, render_template, request, redirect, url_for
+from flaskext.mysql import MySQL
+
+app = Flask(__name__)
+
+# MySQL Configuration
+app.config['MYSQL_DATABASE_USER'] = 'your_username'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'your_password'
+app.config['MYSQL_DATABASE_DB'] = 'escrow_db'
+app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+mysql = MySQL(app)
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/initiate_escrow', methods=['POST'])
+def initiate_escrow():
+    # Logic to create an escrow transaction and store in the database
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        # Your SQL logic here
+        conn.commit()
+        return "Escrow initiated successfully"
+    except Exception as e:
+        return str(e)
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/confirm_payment', methods=['POST'])
+def confirm_payment():
+    # Logic to confirm payment and release funds from escrow
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        # Your SQL logic here
+        conn.commit()
+        return "Payment confirmed and funds released"
+    except Exception as e:
+        return str(e)
+    finally:
+        cursor.close()
+        conn.close()
+
+if __name__ == '__main__':
+    app.run(debug=True)
